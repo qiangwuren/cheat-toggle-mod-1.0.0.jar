@@ -1,0 +1,20 @@
+pluginManagement {
+	repositories {
+		maven {
+			name = 'Fabric Official'
+			url = 'https://maven.fabricmc.net/'
+		}
+		maven {
+			name = 'Hanbings Proxy'
+			url = 'https://repository.hanbings.io/proxy'
+		}
+		maven {
+			name = 'Aliyun'
+			url = 'https://maven.aliyun.com/nexus/content/groups/public'
+		}
+		mavenCentral()
+		gradlePluginPortal()
+	}
+}
+
+rootProject.name = 'cheat-toggle-mod'

@@ -1,0 +1,34 @@
+{
+	"schemaVersion": 1,
+	"id": "cheattoggle",
+	"version": "1.0.0",
+	"name": "修复26.2极限模式无法秒开仙人的Bug",
+	"description": "修复 26.2 版本极限模式下无法直接开启作弊/修改难度的问题，无需通过 NBT 修改器",
+	"authors": [
+		"chi"
+	],
+	"contact": {
+		"homepage": "https://github.com/qiangwuren",
+		"sources": "https://github.com/qiangwuren/cheat-toggle-mod-1.0.0.jar"
+	},
+	"license": "MIT",
+	"icon": "assets/cheattoggle/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"com.cheattoggle.CheatToggleMod"
+		],
+		"client": [
+			"com.cheattoggle.client.CheatToggleModClient"
+		]
+	},
+	"mixins": [
+		"cheattoggle.client.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.19.3",
+		"minecraft": "~26.2",
+		"java": ">=26",
+		"fabric-api": "*"
+	}
+}

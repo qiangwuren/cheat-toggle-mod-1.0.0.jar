@@ -1,0 +1,67 @@
+plugins {
+	id 'net.fabricmc.fabric-loom' version "${loom_version}"
+	id 'maven-publish'
+}
+
+version = project.mod_version
+group = project.maven_group
+
+loom {
+	splitEnvironmentSourceSets()
+	mods {
+		"cheattoggle" {
+			sourceSet sourceSets.main
+			sourceSet sourceSets.client
+		}
+	}
+}
+
+repositories {
+	maven { url = 'https://maven.fabricmc.net/' }
+	maven { url = 'https://repository.hanbings.io/proxy' }
+	maven { url = 'https://maven.aliyun.com/nexus/content/groups/public' }
+	mavenCentral()
+}
+
+dependencies {
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+}
+
+processResources {
+	inputs.properties(
+		version: project.version,
+		minecraft_version: project.minecraft_version,
+		java_version_min: project.java_version_min,
+		loader_version: project.loader_version,
+		java_release: project.java_release
+	)
+	filesMatching("fabric.mod.json") {
+		expand(
+			version: project.version,
+			minecraft_version: project.minecraft_version,
+			java_version_min: project.java_version_min,
+			loader_version: project.loader_version
+		)
+	}
+	filesMatching("**/*.mixins.json") {
+		expand(java_release: project.java_release)
+	}
+}
+
+tasks.withType(JavaCompile).configureEach {
+	it.options.release = Integer.valueOf(project.java_release)
+}
+
+java {
+	withSourcesJar()
+	sourceCompatibility = JavaVersion.toVersion(project.java_release)
+	targetCompatibility = JavaVersion.toVersion(project.java_release)
+}
+
+jar {
+	from("LICENSE") {
+		rename { "${it}_${project.name}" }
+	}
+}
