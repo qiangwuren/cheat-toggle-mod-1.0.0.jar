@@ -5,7 +5,7 @@
 	"name": "修复26.2极限模式无法秒开仙人的Bug",
 	"description": "修复 26.2 版本极限模式下无法直接开启作弊/修改难度的问题，无需通过 NBT 修改器",
 	"authors": [
-		"chi"
+		"qiangwuren"
 	],
 	"contact": {
 		"homepage": "https://github.com/qiangwuren",

@@ -59,7 +59,7 @@ gradlew.bat build
 
 本项目基于 [MIT License](LICENSE) 开源。
 
-作者：**chi**
+作者：**qiangwuren**
 
 ## 免责声明
 
