@@ -1,12 +1,12 @@
 # Cheat Toggle Mod —— 修复 26.3 极限模式无法开启作弊 / 修改难度
 
-一个面向 **Minecraft 26.3 (Fabric)** 的单人游戏实用模组，修复极限模式下无法直接开启作弊、解锁难度锁、修改难度的问题，无需再通过 NBT 修改器。
+一个面向 **Minecraft 26.3 (Fabric)** 的单人游戏实用模组，修复极限模式下无法直接开启作弊、修改难度的问题，无需再通过 NBT 修改器。
 
 > "秒开仙人" = 快速开启作弊。本模组让玩家在极限模式存档中无需退出世界即可开启作弊、修改难度。
 >
 > 本工程由上游的 **26.2** 版本移植而来（上游仓库：[qiangwuren/cheat-toggle-mod-1.0.0.jar](https://github.com/qiangwuren/cheat-toggle-mod-1.0.0.jar)）。
 >
-> ⚠️ **已知问题**：`/cheattoggle lockdifficulty`（难度锁）在**极限模式下不可用**，执行后不报错但不会生效；普通模式正常。详见[实现原理](#难度锁--难度)。
+> ⚠️ **已知问题**：`/cheattoggle lockdifficulty`（难度锁）在**极限模式下不可用**，执行后不报错但不会生效；普通模式正常。详见[已知问题](#已知问题)。
 
 ## 功能
 
@@ -14,7 +14,7 @@
 |---|---|
 | `/cheattoggle cheats <true\|false>` | 开启/关闭作弊，热加载生效，无需重启世界 |
 | `/cheattoggle lockdifficulty <true\|false>` | 解锁/锁定难度。**极限模式下不可用**（见下方说明） |
-| `/cheattoggle difficulty <peaceful\|easy\|normal\|hard>` | 修改难度，绕过极限模式强制 HARD 的限制 |
+| `/cheattoggle difficulty <peaceful\|easy\|normal\|hard>` | 修改难度，绕过极限模式强制 HARD 的限制（难度锁开启时会被锁回 HARD） |
 | `/cheattoggle operatoritems <true\|false>` | 显示/隐藏创造物品栏中的管理员物品分栏 |
 
 ## 实现原理
