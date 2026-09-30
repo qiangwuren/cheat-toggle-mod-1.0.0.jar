@@ -100,6 +100,32 @@ jar {
 	archiveFileName = "${baseName}-${modVersion}+mc${mcVersion}.jar"
 }
 
+// ---------------------------------------------------------------------------
+//  把本次构建的 jar 复制一份到 releases/ —— 该目录集中存放所有版本的 jar，
+//  方便按 Minecraft 版本查找（历史版本不会被动到）。
+//
+//  必须用 Copy 而不是 Sync：Sync 会删除目标目录中不在源集合里的文件，
+//  会把 releases/ 里人工维护的历史版本 jar（如 26.2 的 1.0.0）一起清掉。
+// ---------------------------------------------------------------------------
+def releasesDir = layout.projectDirectory.dir('releases')
+
+tasks.register('syncJarToReleases', Copy) {
+	group = 'build'
+	description = '把构建好的 jar 复制到 releases/ 目录，与其他版本放在一起'
+	dependsOn tasks.named('jar')
+
+	from(layout.projectDirectory) {
+		include "${baseName}-${modVersion}+mc${mcVersion}.jar"
+	}
+	into releasesDir
+	// releases/ 内含人工维护的历史 jar，不作为受追踪的输出目录
+	doNotTrackState('releases/ 内含人工维护的历史版本 jar')
+}
+
+tasks.named('build') {
+	dependsOn 'syncJarToReleases'
+}
+
 publishing {
 	publications {
 		create('mavenJava', MavenPublication) {

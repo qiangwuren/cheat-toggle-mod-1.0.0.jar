@@ -62,6 +62,19 @@
 参考 [Wurst Client](https://github.com/Wurst-Imperium/Wurst-MC) 的 `CreativeModeInventoryScreenMixin`，
 通过客户端 Mixin 拦截 `hasPermissions()`，忽略 `canUseGameMasterBlocks()` 检查，仅由 `operatorItemsTab` 选项控制分栏可见性。
 
+## 下载哪个版本
+
+所有版本的 jar 集中放在 [`releases/`](releases/) 目录，按自己的 Minecraft 版本选择：
+
+| mod 版本 | Minecraft 版本 | 文件名 | Java |
+|---|---|---|---|
+| **1.0.1** | **26.3** | [`releases/cheat-toggle-mod-1.0.1+mc26.3.jar`](releases/cheat-toggle-mod-1.0.1+mc26.3.jar) | `>= 25` |
+| 1.0.0 | 26.2 | [`releases/cheat-toggle-mod-1.0.0.jar`](releases/cheat-toggle-mod-1.0.0.jar) | `>= 26` |
+
+> 两个版本的 jar **互不通用**，请按自己的游戏版本选择。详见 [`releases/README.md`](releases/README.md)。
+>
+> 同一批 jar 也发布在 GitHub Releases 页面：[v26.3](https://github.com/qiangwuren/cheat-toggle-mod-1.0.0.jar/releases/tag/v26.3)（26.3）、[V1.0](https://github.com/qiangwuren/cheat-toggle-mod-1.0.0.jar/releases/tag/V1.0)（26.2）。
+
 ## 环境要求
 
 | 项 | 版本 |
