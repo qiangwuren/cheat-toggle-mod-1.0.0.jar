@@ -14,7 +14,7 @@
 |---|---|
 | `/cheattoggle cheats <true\|false>` | 开启/关闭作弊，热加载生效，无需重启世界 |
 | `/cheattoggle lockdifficulty <true\|false>` | 解锁/锁定难度。**极限模式下不可用**（见下方说明） |
-| `/cheattoggle difficulty <peaceful\|easy\|normal\|hard>` | 修改难度，绕过极限模式强制 HARD 的限制（难度锁开启时会被锁回 HARD） |
+| `/cheattoggle difficulty <peaceful\|easy\|normal\|hard>` | 修改难度，绕过极限模式强制 HARD 的限制，普通模式与极限模式均正常生效 |
 | `/cheattoggle operatoritems <true\|false>` | 显示/隐藏创造物品栏中的管理员物品分栏 |
 
 ## 实现原理
@@ -55,7 +55,7 @@
 另外，极限模式下 `hardcore` 标志会把难度强制为 `HARD`：
 `/cheattoggle difficulty` 会通过反射临时把 `LevelSettings.DifficultySettings.hardcore` 置为 `false`，
 调用完成后再置回 `true`（`PrimaryLevelData.settings` 字段在 26.3 中依然存在），从而绕过该限制改难度。
-但需注意：**若难度锁处于开启状态，改完的难度仍会被锁回 `HARD`**。
+**该指令在普通模式与极限模式下均正常生效。**
 
 ### 管理员物品分栏
 
@@ -125,11 +125,12 @@ gradlew.bat build
 | 指令 | 普通模式 | 极限模式 |
 |---|---|---|
 | `/cheattoggle cheats` | ✅ 正常 | ✅ 正常 |
-| `/cheattoggle difficulty` | ✅ 正常 | ⚠️ 可改，但难度锁开启时会被锁回 `HARD` |
+| `/cheattoggle difficulty` | ✅ 正常 | ✅ 正常 |
 | `/cheattoggle lockdifficulty` | ✅ 正常 | ❌ **无效**（不报错，但难度锁状态不变） |
 | `/cheattoggle operatoritems` | ✅ 正常 | ✅ 正常 |
 
-`lockdifficulty` 在极限模式下无效是游戏本身的既定行为，**本模组不打算修复**，仅在此声明。
+**仅 `lockdifficulty` 在极限模式下无效**，这是游戏本身的既定行为，**本模组不打算修复**，仅在此声明。
+`difficulty` 指令在两种模式下都正常，不受此问题影响。
 
 ## 开源许可
 
