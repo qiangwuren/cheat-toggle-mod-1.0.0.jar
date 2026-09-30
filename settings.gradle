@@ -1,19 +1,51 @@
+// ============================================================================
+//  Gradle 插件与依赖仓库 —— 全部走国内镜像，避免直连境外源超时
+//  目标环境: Minecraft 26.3 / Fabric Loom 1.18.2 / Gradle 9.7.1
+// ============================================================================
 pluginManagement {
 	repositories {
+		// 1) Fabric 官方源：Loom 插件与 Fabric 系列构件只有这里有，必须放首位
 		maven {
-			name = 'Fabric Official'
+			name = 'Fabric'
+			url = 'https://maven.fabricmc.net/'
+		}
+		// 2) 阿里云公共仓库镜像（代理 Maven Central）
+		maven {
+			name = 'AliyunPublic'
+			url = 'https://maven.aliyun.com/repository/public'
+		}
+		// 3) 华为云镜像（阿里云不可用时的备用）
+		maven {
+			name = 'HuaweiCloud'
+			url = 'https://repo.huaweicloud.com/repository/maven/'
+		}
+		// 4) Gradle 插件门户的阿里云镜像
+		maven {
+			name = 'AliyunGradlePlugin'
+			url = 'https://maven.aliyun.com/repository/gradle-plugin'
+		}
+		// 5) 兜底：官方源
+		mavenCentral()
+		gradlePluginPortal()
+	}
+}
+
+// 统一依赖仓库（Loom 还会自动追加它自带的 Minecraft / Fabric 仓库）
+dependencyResolutionManagement {
+	repositories {
+		maven {
+			name = 'Fabric'
 			url = 'https://maven.fabricmc.net/'
 		}
 		maven {
-			name = 'Hanbings Proxy'
-			url = 'https://repository.hanbings.io/proxy'
+			name = 'AliyunPublic'
+			url = 'https://maven.aliyun.com/repository/public'
 		}
 		maven {
-			name = 'Aliyun'
-			url = 'https://maven.aliyun.com/nexus/content/groups/public'
+			name = 'HuaweiCloud'
+			url = 'https://repo.huaweicloud.com/repository/maven/'
 		}
 		mavenCentral()
-		gradlePluginPortal()
 	}
 }
 

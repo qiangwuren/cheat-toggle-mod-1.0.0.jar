@@ -5,6 +5,31 @@
 格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/)，
 并遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [1.0.1] - 2026
+
+### 变更
+- 目标版本由 Minecraft **26.2** 移植到 **26.3**
+  - Fabric Loader `0.19.3` → `0.19.5`
+  - Fabric API `0.155.2+26.2` → `0.161.0+26.3`
+  - Fabric Loom `1.17-SNAPSHOT` → `1.18.2`（稳定版）
+  - Gradle `9.5.1` → `9.7.1`
+- **放宽 Java 版本要求**：`java_release` / `java_version_min` 由 `26` 降到 **`25`**
+  （即 26.3 的字节码下限；JDK 25/26/27… 均可，不再强制最新版）
+- 适配 26.3 全新的权限系统（`net.minecraft.server.permissions`）
+
+### 修复
+- 移除 26.3 中已被删除的 `PlayerList#setAllowCommandsForAllPlayers(boolean)` 调用，
+  改为「写世界数据 + 重发权限」的热切换链路；`/cheattoggle cheats` 依然无需重启世界即可生效
+- 修复 `cheattoggle.client.mixins.json` 的 `compatibilityLevel`：
+  上游硬编码 `JAVA_17`，且 `processResources` 的 `filesMatching('**/*.mixins.json')`
+  因 Gradle 不做部分匹配而从未命中该文件，现改为 `*.mixins.json` 并直接声明 `JAVA_21`
+
+### 工程
+- 全部依赖仓库改为国内镜像（Fabric 官方源 + 阿里云公共仓库 + 华为云）
+- Gradle 发行包走腾讯云镜像并开启多线程下载（`parallelDownloads=8`）
+- Minecraft 版本清单改走 BMCLAPI 国内镜像
+- 新增 `setup-fabric-env.ps1` 一键环境配置 / 构建脚本（自动探测 JDK、构建、校验产物）
+
 ## [1.0.0] - 2026-07-31
 
 ### 新增

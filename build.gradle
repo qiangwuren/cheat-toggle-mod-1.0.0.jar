@@ -1,3 +1,8 @@
+// ============================================================================
+//  Cheat Toggle Mod —— Minecraft 26.3 (Fabric)
+//  上游仓库: https://github.com/qiangwuren/cheat-toggle-mod-1.0.0.jar
+//  本工程: 由 26.2 移植到 26.3，并把 Java 版本要求放宽到下限 25
+// ============================================================================
 plugins {
 	id 'net.fabricmc.fabric-loom' version "${loom_version}"
 	id 'maven-publish'
@@ -5,9 +10,14 @@ plugins {
 
 version = project.mod_version
 group = project.maven_group
+base {
+	archivesName = project.archives_base_name
+}
 
 loom {
+	// 客户端 / 服务端源码分离（mixin 只进客户端源集）
 	splitEnvironmentSourceSets()
+
 	mods {
 		"cheattoggle" {
 			sourceSet sourceSets.main
@@ -16,42 +26,48 @@ loom {
 	}
 }
 
+// 仓库已在 settings.gradle 的 dependencyResolutionManagement 中统一配置为国内镜像；
+// Loom 会自动追加它自带的 Minecraft / Fabric 仓库。
 repositories {
-	maven { url = 'https://maven.fabricmc.net/' }
-	maven { url = 'https://repository.hanbings.io/proxy' }
-	maven { url = 'https://maven.aliyun.com/nexus/content/groups/public' }
-	mavenCentral()
 }
 
 dependencies {
+	// 26.3 无需 mappings 坐标：该版本起 Minecraft 已无混淆
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
 	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 }
 
+// ---------------------------------------------------------------------------
+//  资源处理：把 gradle.properties 中的版本号注入 fabric.mod.json / mixins.json
+// ---------------------------------------------------------------------------
 processResources {
-	inputs.properties(
-		version: project.version,
+	def expandProps = [
+		version          : project.version,
 		minecraft_version: project.minecraft_version,
-		java_version_min: project.java_version_min,
-		loader_version: project.loader_version,
-		java_release: project.java_release
-	)
-	filesMatching("fabric.mod.json") {
-		expand(
-			version: project.version,
-			minecraft_version: project.minecraft_version,
-			java_version_min: project.java_version_min,
-			loader_version: project.loader_version
-		)
+		loader_version   : project.loader_version,
+		java_version_min : project.java_version_min,
+		java_release     : project.java_release
+	]
+
+	inputs.properties(expandProps)
+
+	filesMatching('fabric.mod.json') {
+		expand(expandProps)
 	}
-	filesMatching("**/*.mixins.json") {
-		expand(java_release: project.java_release)
+	// 注意：Gradle 的 filesMatching 不做「部分匹配」，模式必须能完整匹配文件名。
+	// 这里用 '*.mixins.json'（而不是 '**/*.mixins.json'）才能命中根级资源文件。
+	filesMatching('*.mixins.json') {
+		expand(expandProps)
 	}
 }
 
+// ---------------------------------------------------------------------------
+//  Java 编译：锁定 Java 25（26.3 的字节码下限），不强制最新 JDK
+// ---------------------------------------------------------------------------
 tasks.withType(JavaCompile).configureEach {
-	it.options.release = Integer.valueOf(project.java_release)
+	options.encoding = 'UTF-8'
+	options.release = Integer.parseInt(project.java_release.toString())
 }
 
 java {
@@ -60,8 +76,36 @@ java {
 	targetCompatibility = JavaVersion.toVersion(project.java_release)
 }
 
+// ---------------------------------------------------------------------------
+//  jar：附带 LICENSE，并直接输出到「源码文件夹根目录」，
+//  文件名带 mc26.3 便于识别，游戏可直接取用。
+//
+//  为什么直接把 jar 任务的输出目录指向工程根目录、而不是构建后再复制：
+//  Gradle 会校验任务之间的隐式依赖关系 —— 任何以工程根目录为输出目录的任务
+//  都会与 build/、sourcesJar、test 等产生冲突（implicit dependency 报错）。
+//  让 jar 任务本身直接写到根目录则不存在这个问题。
+//
+//  注：所有 project.* 取值都在配置期完成，避免执行期访问 Task.project
+//      （Gradle 配置缓存不允许）
+// ---------------------------------------------------------------------------
+def modVersion = project.mod_version.toString()
+def mcVersion = project.minecraft_version.toString()
+def baseName = project.archives_base_name.toString()
+
 jar {
-	from("LICENSE") {
-		rename { "${it}_${project.name}" }
+	from('LICENSE') {
+		rename { "${it}_${baseName}" }
+	}
+	destinationDirectory = layout.projectDirectory
+	archiveFileName = "${baseName}-${modVersion}+mc${mcVersion}.jar"
+}
+
+publishing {
+	publications {
+		create('mavenJava', MavenPublication) {
+			from components.java
+		}
+	}
+	repositories {
 	}
 }

@@ -3,7 +3,7 @@
 	"id": "cheattoggle",
 	"version": "${version}",
 	"name": "cheattoggle",
-	"description": "修复 26.2 版本极限模式下无法直接开启作弊/修改难度的问题，无需通过 NBT 修改器",
+	"description": "修复 Minecraft 26.3 极限模式下无法直接开启作弊、修改难度、解除难度锁的问题，无需 NBT 修改器。仅单人游戏可用。",
 	"authors": [
 		"qiangwuren"
 	],
