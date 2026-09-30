@@ -2,16 +2,18 @@
 
 一个面向 **Minecraft 26.3 (Fabric)** 的单人游戏实用模组，修复极限模式下无法直接开启作弊、解锁难度锁、修改难度的问题，无需再通过 NBT 修改器。
 
-> "秒开仙人" = 快速开启作弊。本模组让玩家在极限模式存档中无需退出世界即可开启作弊、解锁难度锁、修改难度。
+> "秒开仙人" = 快速开启作弊。本模组让玩家在极限模式存档中无需退出世界即可开启作弊、修改难度。
 >
 > 本工程由上游的 **26.2** 版本移植而来（上游仓库：[qiangwuren/cheat-toggle-mod-1.0.0.jar](https://github.com/qiangwuren/cheat-toggle-mod-1.0.0.jar)）。
+>
+> ⚠️ **已知问题**：`/cheattoggle lockdifficulty`（难度锁）在**极限模式下不可用**，执行后不报错但不会生效；普通模式正常。详见[实现原理](#难度锁--难度)。
 
 ## 功能
 
 | 指令 | 说明 |
 |---|---|
 | `/cheattoggle cheats <true\|false>` | 开启/关闭作弊，热加载生效，无需重启世界 |
-| `/cheattoggle lockdifficulty <true\|false>` | 解锁/锁定难度（极限模式下也能用：内部会临时解除 hardcore 再恢复） |
+| `/cheattoggle lockdifficulty <true\|false>` | 解锁/锁定难度。**极限模式下不可用**（见下方说明） |
 | `/cheattoggle difficulty <peaceful\|easy\|normal\|hard>` | 修改难度，绕过极限模式强制 HARD 的限制 |
 | `/cheattoggle operatoritems <true\|false>` | 显示/隐藏创造物品栏中的管理员物品分栏 |
 
@@ -42,8 +44,18 @@
 ### 难度锁 & 难度
 
 通过 `server.setDifficultyLocked()` / `server.setDifficulty(difficulty, true)` 生效。
-极限模式下 `hardcore` 标志会把难度强制为 `HARD`，故通过反射临时把 `LevelSettings.DifficultySettings.hardcore` 置为 `false`，
-调用完成后再置回 `true`（`PrimaryLevelData.settings` 字段在 26.3 中依然存在）。
+
+**⚠️ 已知问题：`/cheattoggle lockdifficulty` 在极限模式下不可用。**
+
+- **普通模式**：解锁/锁定难度正常生效。
+- **极限模式**：该指令**无效**。执行后不会报错、指令也会正常返回成功提示，但难度锁状态不会真正改变。
+  极限模式存档本身不允许解除难度锁，这是游戏的既定行为，**本模组不打算修复**（也不是移植过程中引入的问题）。
+- 本次移植只是把这一限制**如实声明**出来，指令实现本身未做改动。
+
+另外，极限模式下 `hardcore` 标志会把难度强制为 `HARD`：
+`/cheattoggle difficulty` 会通过反射临时把 `LevelSettings.DifficultySettings.hardcore` 置为 `false`，
+调用完成后再置回 `true`（`PrimaryLevelData.settings` 字段在 26.3 中依然存在），从而绕过该限制改难度。
+但需注意：**若难度锁处于开启状态，改完的难度仍会被锁回 `HARD`**。
 
 ### 管理员物品分栏
 
@@ -107,6 +119,17 @@ gradlew.bat build
 1. 安装 **Fabric Loader**（26.3）与 **Fabric API**
 2. 把 `cheat-toggle-mod-<版本>+mc26.3.jar` 放入 `.minecraft/mods/`
 3. 启动游戏，进入单人世界后使用 `/cheattoggle` 指令
+
+## 已知问题
+
+| 指令 | 普通模式 | 极限模式 |
+|---|---|---|
+| `/cheattoggle cheats` | ✅ 正常 | ✅ 正常 |
+| `/cheattoggle difficulty` | ✅ 正常 | ⚠️ 可改，但难度锁开启时会被锁回 `HARD` |
+| `/cheattoggle lockdifficulty` | ✅ 正常 | ❌ **无效**（不报错，但难度锁状态不变） |
+| `/cheattoggle operatoritems` | ✅ 正常 | ✅ 正常 |
+
+`lockdifficulty` 在极限模式下无效是游戏本身的既定行为，**本模组不打算修复**，仅在此声明。
 
 ## 开源许可
 
